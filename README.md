@@ -1,7 +1,13 @@
 
 Gitlab CLI
 =================
-Practive command line interface for gitlab. GitLab API wrapper.
+Practice command line interface for gitlab. GitLab API wrapper.
+
+Installation
+--------------
+Create a symlink in a executable PATH directory
+
+`ln -s gitlab ~/bin/`
 
 Setup
 --------------
@@ -11,6 +17,8 @@ Command
 --------------
 
 `gitlab <resource> title description`
+
+Create an issue
 
 `gitlab issues test_issue_title test_issue_description`
 
