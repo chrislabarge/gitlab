@@ -1,0 +1,14 @@
+#!/bin/bash
+
+TOKEN=$GL_TOKEN
+ACTION=$1
+PROJECT_ID=6944112
+URL='https://gitlab.com/api/v4/projects/'$PROJECT_ID'/'$ACTION
+
+cat <<- _EOF_
+$(curl -d "private_token=$TOKEN&title=$2&description=$3" -X POST $URL)
+
+Ran command with action: $1
+with title: $2
+with description: $3
+_EOF_
