@@ -16,14 +16,14 @@ Setup
 Command
 --------------
 
-`gitlab <resource> title description`
+`gitlab <resource> <action> <attribute_1> <attribute_2>`
 
 Create an issue
 
-`gitlab issues test_issue_title test_issue_description`
+`gitlab issues create new_issue_title new_issue_description`
 
 ### Vim Example
 
 Use window content as the description of an issue.
 
-`:! gitlab issues test_issue_title "$(cat %)"`
+`:! gitlab issues create new_issue_title "$(cat %)"`

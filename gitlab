@@ -1,14 +1,51 @@
 #!/bin/bash
+#return a 0 1 or 2 dependent on success of command
+#have build command use the array tenique to dynamically run the command
+#have allow for the commands to come in any order.
+#have it so if the flag commands likes --title= are not present, each ATTR command will be the API's order of attributes.
 
 TOKEN=$GL_TOKEN
-ACTION=$1
+RESOURCE=$1
+ACTION=$2
+ATTR_1=$3
+ATTR_2=$4
 PROJECT_ID=6944112
-URL='https://gitlab.com/api/v4/projects/'$PROJECT_ID'/'$ACTION
+BASE_URL='https://gitlab.com/api/v4'
+
+build_url() {
+  echo $BASE_URL'/projects/'$PROJECT_ID'/'$RESOURCE
+}
+
+build_command() {
+
+  if [ "$ACTION" == 'list' ]; then
+    action='GET'
+  elif [ "$ACTION" == 'ls' ]; then
+    action='GET'
+  elif [ "$ACTION" == 'create' ]; then
+    action='POST'
+  elif [ "$ACTION" == '-c' ]; then
+    action='POST'
+  elif [ "$ACTION" == 'new' ]; then
+    action='POST'
+  fi
+
+  url=$(build_url)
+
+  echo "$(curl -d "private_token=$TOKEN&title=$ATTR_1&description=$ATTR_2" -X $action $url)"
+}
+
+run_command() {
+  echo $(build_command)
+}
+
+run_command
 
 cat <<- _EOF_
-$(curl -d "private_token=$TOKEN&title=$2&description=$3" -X POST $URL)
 
-Ran command with action: $1
-with title: $2
-with description: $3
+Executed command
+with resource: $1
+with action: $2
+with title: $3
+with description: $4
 _EOF_
