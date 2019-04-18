@@ -3,6 +3,7 @@
 #have build command use the array tenique to dynamically run the command
 #have allow for the commands to come in any order.
 #have it so if the flag commands likes --title= are not present, each ATTR command will be the API's order of attributes.
+# add tab completion
 
 TOKEN=$GL_TOKEN
 RESOURCE=$1
