@@ -1,5 +1,4 @@
 #!/bin/bash
-#return a 0 1 or 2 dependent on success of command
 #have build command use the array tenique to dynamically run the command
 #have allow for the commands to come in any order.
 #have it so if the flag commands likes --title= are not present, each ATTR command will be the API's order of attributes.
@@ -14,7 +13,7 @@ PROJECT_ID=6944112
 BASE_URL='https://gitlab.com/api/v4'
 
 build_url() {
-  echo $BASE_URL'/projects/'$PROJECT_ID'/'$RESOURCE
+  echo "${BASE_URL}/projects/${PROJECT_ID}/${RESOURCE}"
 }
 
 build_command() {
@@ -33,14 +32,8 @@ build_command() {
 
   url=$(build_url)
 
-  echo "$(curl -d "private_token=$TOKEN&title=$ATTR_1&description=$ATTR_2" -X $action $url)"
+  echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}" -X $action $url)"
 }
-
-run_command() {
-  echo $(build_command)
-}
-
-run_command
 
 cat <<- _EOF_
 
@@ -49,4 +42,17 @@ with resource: $1
 with action: $2
 with title: $3
 with description: $4
+
 _EOF_
+
+output="$(build_command)"
+
+echo $output
+
+if echo $output | grep -iqF error; then
+  echo 'Response returned an error.' >&2
+  exit 1
+else
+  exit 0
+fi
+
