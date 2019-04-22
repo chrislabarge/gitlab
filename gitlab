@@ -16,6 +16,16 @@ build_url() {
   echo "${BASE_URL}/projects/${PROJECT_ID}/${RESOURCE}"
 }
 
+if ["$ATTR_1" == ""]; then
+  echo -n 'Please provide a Title: '
+  read ATTR_1
+fi
+
+if ["$ATTR_1" == ""]; then
+  echo -n 'Please provide a Description: '
+  read ATTR_2
+fi
+
 build_command() {
 
   if [ "$ACTION" == 'list' ]; then
