@@ -12,6 +12,7 @@ Create a symlink in a executable PATH directory
 Setup
 --------------
 `export $GL_TOKEN=YOUR_GITLAB_PRIVATE_ACCESS_TOKEN`
+`export $GL_PROJECT_ID=YOUR_GITLAB_PROJECT_ID`
 
 Command
 --------------

@@ -10,7 +10,7 @@ ACTION=$2
 ATTR_1=$3
 ATTR_2=$4
 ATTR_3=$5
-PROJECT_ID=12054911 #6944112
+PROJECT_ID=$GL_PROJECT_ID
 BASE_URL='https://gitlab.com/api/v4'
 
 build_url() {
