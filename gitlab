@@ -9,7 +9,8 @@ RESOURCE=$1
 ACTION=$2
 ATTR_1=$3
 ATTR_2=$4
-PROJECT_ID=6944112
+ATTR_3=$5
+PROJECT_ID=12054911 #6944112
 BASE_URL='https://gitlab.com/api/v4'
 
 build_url() {
@@ -21,9 +22,14 @@ if ["$ATTR_1" == ""]; then
   read ATTR_1
 fi
 
-if ["$ATTR_1" == ""]; then
+if ["$ATTR_2" == ""]; then
   echo -n 'Please provide a Description: '
   read ATTR_2
+fi
+
+if ["$ATTR_3" == ""]; then
+  read -e -p 'Please provide Labels - (Feature,Bug,Soon,Later,Idea,Test Me): ' -i 'Bug'
+  ATTR_3=$REPLY
 fi
 
 build_command() {
@@ -42,7 +48,7 @@ build_command() {
 
   url=$(build_url)
 
-  echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}" -X $action $url)"
+  echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}&labels=${ATTR_3}" -X $action $url)"
 }
 
 cat <<- _EOF_
