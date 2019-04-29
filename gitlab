@@ -17,19 +17,43 @@ build_url() {
   echo "${BASE_URL}/projects/${PROJECT_ID}/${RESOURCE}"
 }
 
-if ["$ATTR_1" == ""]; then
-  echo -n 'Please provide a Title: '
-  read ATTR_1
-fi
+comment_json() {
+cat <<- _EOF_
+{
+  "discussion": {
+    "body": "This_is_a_NEW_Comment",
+    "position": {
+      "base_sha": "2860a6164b284f62a0f255268b1bdb8b65ea15f6",
+      "start_sha": "2860a6164b284f62a0f255268b1bdb8b65ea15f6",
+      "head_sha": "d9662d5d44805f4bc5f5ccdc89855f6633c4626f",
+      "old_path": "app/assets/stylesheets/main.scss",
+      "new_path": "app/assets/stylesheets/main.scss",
+      "position_type": "text",
+      "new_line": "10",
+    },
+  },
+}
+_EOF_
 
-if ["$ATTR_2" == ""]; then
-  echo -n 'Please provide a Description: '
-  read ATTR_2
-fi
+}
 
-if ["$ATTR_3" == ""]; then
-  read -e -p 'Please provide Labels - (Feature,Bug,Soon,Later,Idea,Test Me): ' -i 'Bug'
-  ATTR_3=$REPLY
+
+if ["$RESOURCE" == "issues"]; then
+
+  if ["$ATTR_1" == ""]; then
+    echo -n 'Please provide a Title: '
+    read ATTR_1
+  fi
+
+  if ["$ATTR_2" == ""]; then
+    echo -n 'Please provide a Description: '
+    read ATTR_2
+  fi
+
+  if ["$ATTR_3" == ""]; then
+    read -e -p 'Please provide Labels - (Feature,Bug,Soon,Later,Idea,Test Me): ' -i 'Bug'
+    ATTR_3=$REPLY
+  fi
 fi
 
 build_command() {
@@ -48,8 +72,16 @@ build_command() {
 
   url=$(build_url)
 
-  echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}&labels=${ATTR_3}" -X $action $url)"
+  if ["$RESOURCE" == 'issues']; then
+    echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}&labels=${ATTR_3}" -X $action $url)"
+  else
+    payload=$(comment_json)
+    echo $payload
+    echo $payload | curl -v -H "PRIVATE-TOKEN: ${TOKEN}" -H "Content-Type: application/json" -X $action "${url}/112/discussions/" \
+      -d @-
+  fi
 }
+
 
 cat <<- _EOF_
 
@@ -63,7 +95,7 @@ _EOF_
 
 output="$(build_command)"
 
-echo $output
+echo $output | python -m json.tool
 
 if echo $output | grep -iqF error; then
   echo 'Response returned an error.' >&2
