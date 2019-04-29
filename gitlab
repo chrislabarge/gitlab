@@ -19,23 +19,22 @@ build_url() {
 
 comment_json() {
 cat <<- _EOF_
-{
-  "discussion": {
-    "body": "This_is_a_NEW_Comment",
+  {
+    "body": "This_is_something even newer",
     "position": {
       "base_sha": "2860a6164b284f62a0f255268b1bdb8b65ea15f6",
       "start_sha": "2860a6164b284f62a0f255268b1bdb8b65ea15f6",
-      "head_sha": "d9662d5d44805f4bc5f5ccdc89855f6633c4626f",
+      "head_sha": "705c770674381eb28a05e36bad61760bb7c5464e",
       "old_path": "app/assets/stylesheets/main.scss",
       "new_path": "app/assets/stylesheets/main.scss",
       "position_type": "text",
-      "new_line": "10",
-    },
-  },
-}
+      "new_line": "12"
+    }
+  }
 _EOF_
 
 }
+
 
 
 if ["$RESOURCE" == "issues"]; then
@@ -57,7 +56,6 @@ if ["$RESOURCE" == "issues"]; then
 fi
 
 build_command() {
-
   if [ "$ACTION" == 'list' ]; then
     action='GET'
   elif [ "$ACTION" == 'ls' ]; then
@@ -72,14 +70,16 @@ build_command() {
 
   url=$(build_url)
 
-  if ["$RESOURCE" == 'issues']; then
-    echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}&labels=${ATTR_3}" -X $action $url)"
-  else
-    payload=$(comment_json)
+
+  #if ["$RESOURCE" == 'issues']; then
+  #  echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}&labels=${ATTR_3}" -X $action $url)"
+  #else
+    payload="$(comment_json)"
     echo $payload
-    echo $payload | curl -v -H "PRIVATE-TOKEN: ${TOKEN}" -H "Content-Type: application/json" -X $action "${url}/112/discussions/" \
-      -d @-
-  fi
+    echo "$(curl 0 -v -H "Content-Type: application/json" -H "Private-Token: ${TOKEN}" -X $action "${url}/112/discussions/" -d "${payload}")"
+    #echo $payload | curl -v -H "PRIVATE-TOKEN: ${TOKEN}" -H "Content-Type: application/json" -X $action "${url}/112/discussions/" \
+    #  -d @-
+  #jfi
 }
 
 
@@ -95,7 +95,7 @@ _EOF_
 
 output="$(build_command)"
 
-echo $output | python -m json.tool
+echo $output #| python -m json.tool
 
 if echo $output | grep -iqF error; then
   echo 'Response returned an error.' >&2
