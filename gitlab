@@ -10,6 +10,7 @@ ACTION=$2
 ATTR_1=$3
 ATTR_2=$4
 ATTR_3=$5
+ATTR_4=$6
 PROJECT_ID=$GL_PROJECT_ID
 BASE_URL='https://gitlab.com/api/v4'
 
@@ -18,26 +19,24 @@ build_url() {
 }
 
 comment_json() {
-cat <<- _EOF_
-  {
-    "body": "This_is_something even newer",
-    "position": {
-      "base_sha": "2860a6164b284f62a0f255268b1bdb8b65ea15f6",
-      "start_sha": "2860a6164b284f62a0f255268b1bdb8b65ea15f6",
-      "head_sha": "705c770674381eb28a05e36bad61760bb7c5464e",
-      "old_path": "app/assets/stylesheets/main.scss",
-      "new_path": "app/assets/stylesheets/main.scss",
-      "position_type": "text",
-      "new_line": "12"
+  cat <<- _EOF_
+    {
+      "body": "$ATTR_4",
+      "position": {
+        "base_sha": "",
+        "start_sha": "",
+        "head_sha": "",
+        "old_path": "$ATTR_2",
+        "new_path": "$ATTR_2",
+        "position_type": "text",
+        "new_line": "$ATTR_3"
+      }
     }
-  }
 _EOF_
 
 }
 
-
-
-if ["$RESOURCE" == "issues"]; then
+if [ $RESOURCE == 'issues' ]; then
 
   if ["$ATTR_1" == ""]; then
     echo -n 'Please provide a Title: '
@@ -70,16 +69,16 @@ build_command() {
 
   url=$(build_url)
 
-
-  #if ["$RESOURCE" == 'issues']; then
-  #  echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}&labels=${ATTR_3}" -X $action $url)"
-  #else
+  if [ $RESOURCE == 'issues' ]; then
+    echo "$(curl -d "private_token=${TOKEN}&title=${ATTR_1}&description=${ATTR_2}&labels=${ATTR_3}" -X $action $url)"
+  else
     payload="$(comment_json)"
     echo $payload
-    echo "$(curl 0 -v -H "Content-Type: application/json" -H "Private-Token: ${TOKEN}" -X $action "${url}/112/discussions/" -d "${payload}")"
+    echo "$(curl -v -d "private_token=${TOKEN}" -X $action $url)"
+#    echo "$(curl 0 -v -H "Content-Type: application/json" -H "Private-Token: ${TOKEN}" -X $action "${url}/112/discussions/" -d "${payload}")"
     #echo $payload | curl -v -H "PRIVATE-TOKEN: ${TOKEN}" -H "Content-Type: application/json" -X $action "${url}/112/discussions/" \
     #  -d @-
-  #jfi
+  fi
 }
 
 
@@ -95,7 +94,7 @@ _EOF_
 
 output="$(build_command)"
 
-echo $output #| python -m json.tool
+echo $output | python -m json.tool
 
 if echo $output | grep -iqF error; then
   echo 'Response returned an error.' >&2
